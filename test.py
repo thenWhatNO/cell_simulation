@@ -17,7 +17,7 @@ clock = pygame.time.Clock()
 FPS = 60
 
 
-gens_colecction = "start_gen_1start_gen_1end" \
+gens_colecction = "start_gen_1start_gen_1rdis100end" \
 "move_leftstep_leftend" \
 "move_rightstep_rightend"
 
@@ -29,6 +29,8 @@ class Cell:
         self.y = y
         self.gens = gens
         self.morph_gen_list = []
+
+        self.radios = []
 
     def gen_expresion(self):
         output_marphogen = []
@@ -48,8 +50,22 @@ class Cell:
             if gene_product == '':
                 gene_product = morph
 
+            if gene_product.find('r') != -1:
+                gene_product = self.cell_marphogen_radius(gene_product, start_index)
+
             output_marphogen.append(gene_product)
         self.morph_gen_list = output_marphogen
+
+    def cell_marphogen_radius(self, gen, gen_start):
+        start_marker = "rdis"
+        start_index = gen.find(start_marker)
+
+        stated_point = start_index + len(start_marker)
+        gen_out = gen[0:start_index]
+        radios = gen[stated_point:]
+        raduos_int = int(radios)
+
+        return [gen_out, raduos_int]
 
     def cell_functions_realisation(self):
         working_morph_gen_list = self.morph_gen_list.copy()
@@ -62,14 +78,21 @@ class Cell:
                 self.x += 5
                 self.morph_gen_list.remove(morph)
                 return
+            if len(morph) > 1:
+                if morph[0] == "start_gen_1":
+                    self.radios.append(morph[1])
+                    self.morph_gen_list.remove(morph)
+                    return
         
 
     def cell_draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), 30, width=0)
+        if self.radios != []:
+            pygame.draw.circle(screen, self.color, (self.x, self.y), self.radios[0], width=1)
 
 
 cell = Cell(gens_colecction, "red", 1, SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
-cell.morph_gen_list = ["move_left","move_left","move_left","move_left","move_left","move_left","move_left"]
+cell.morph_gen_list = ["start_gen_1"]
 
 
 bakteria = Cell(gens_colecction, "green", 1, SCREEN_WIDTH//3, SCREEN_HEIGHT//3)
