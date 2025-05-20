@@ -17,7 +17,7 @@ clock = pygame.time.Clock()
 FPS = 60
 
 
-gens_colecction = "start_gen_1start_gen_1rdis100end" \
+gens_colecction = "start_gen_1start_gen_1-rdis100/move_left/move_rightend" \
 "move_leftstep_leftend" \
 "move_rightstep_rightend"
 
@@ -32,10 +32,9 @@ class Cell:
 
         self.radios = []
 
-    def gen_expresion(self):
-        output_marphogen = []
+    def read_from_gens_colecction_full_gen(self):
+        output__full_gen = []
         for morph in self.morph_gen_list:
-
             start_marker = morph
             start_index = self.gens.find(start_marker)
             if start_index == -1:
@@ -46,26 +45,30 @@ class Cell:
             if end_index == -1:
                 continue
 
-            gene_product = self.gens[read_start:end_index]
-            if gene_product == '':
-                gene_product = morph
+            gene_product_chunk = self.gens[read_start:end_index]
 
-            if gene_product.find('r') != -1:
-                gene_product = self.cell_marphogen_radius(gene_product, start_index)
+            gene_product = gene_product_chunk.split('/')
+            output__full_gen.append(gene_product)
+        
+        return output__full_gen
+        
+    def export_marker_for_product(self, row_produts):
+        out_gen_marker = []
 
-            output_marphogen.append(gene_product)
-        self.morph_gen_list = output_marphogen
+        for gen in row_produts:
+            for product in gen:
+                if product.find('-'):
+                    product = product.split('-')
+                out_gen_marker.append(product)
+        
+        self.morph_gen_list = out_gen_marker
 
-    def cell_marphogen_radius(self, gen, gen_start):
-        start_marker = "rdis"
-        start_index = gen.find(start_marker)
 
-        stated_point = start_index + len(start_marker)
-        gen_out = gen[0:start_index]
-        radios = gen[stated_point:]
-        raduos_int = int(radios)
+    def expres_marker(self):
+        for gen in self.morph_gen_list:
+            for product in gen:
+                pass
 
-        return [gen_out, raduos_int]
 
     def cell_functions_realisation(self):
         working_morph_gen_list = self.morph_gen_list.copy()
@@ -95,27 +98,26 @@ cell = Cell(gens_colecction, "red", 1, SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 cell.morph_gen_list = ["start_gen_1"]
 
 
-bakteria = Cell(gens_colecction, "green", 1, SCREEN_WIDTH//3, SCREEN_HEIGHT//3)
+out = cell.read_from_gens_colecction_full_gen()
+cell.export_marker_for_product(out)
 
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-    screen.fill((225, 225, 225))
+# running = True
+# while running:
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             running = False
+
+#     screen.fill((225, 225, 225))
      
 
-    cell.gen_expresion()
-    cell.cell_functions_realisation()
-    cell.cell_draw()
-    pygame.time.delay(50)
+#     pygame.time.delay(50)
 
-    pygame.display.flip()
+#     pygame.display.flip()
 
    
-    clock.tick(FPS)
+#     clock.tick(FPS)
 
-pygame.quit()
-sys.exit()
+# pygame.quit()
+# sys.exit()
